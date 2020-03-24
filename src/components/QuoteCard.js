@@ -11,7 +11,7 @@ QuoteCard.prototype = {
 
 function QuoteCard(props) {
     return (
-        <figure class="QuoteCard">
+        <figure className="QuoteCard">
             <img
             src={props.image}
             alt={props.character} />
