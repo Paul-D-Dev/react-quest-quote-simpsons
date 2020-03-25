@@ -1,42 +1,52 @@
 import React from "react";
-import QuoteCard from './QuoteCard'
+import QuoteCard from './QuoteCard';
+import axios from 'axios';
 
 // An array of objects
-const quotes = [
-  {
+const initialQuote = {
     quote:
       "Facts are meaningless. You could use facts to prove anything that's even remotely true.",
     character: "Homer Simpson",
     image:
       "https://cdn.glitch.com/3c3ffadc-3406-4440-bb95-d40ec8fcde72%2FHomerSimpson.png?1497567511939"
-  },
-  {
-    quote: "Nothing you say can upset us. We're the MTV generation.",
-    character: "Bart Simpson",
-    image:
-      "https://cdn.glitch.com/3c3ffadc-3406-4440-bb95-d40ec8fcde72%2FBartSimpson.png?1497567511638"
-  },
-  {
-    quote: "That's where I saw the leprechaun...He told me to burn things.",
-    character: "Ralph Wiggum",
-    image:
-      "https://cdn.glitch.com/3c3ffadc-3406-4440-bb95-d40ec8fcde72%2FRalphWiggum.png?1497567511523"
-  },
-  {
-    quote:
-      "Hello, Simpson. I'm riding the bus today because Mother hid my car keys to punish me for talking to a woman on the phone. She was right to do it.",
-    character: "Principal Skinner",
-    image:
-      "https://cdn.glitch.com/3c3ffadc-3406-4440-bb95-d40ec8fcde72%2FSeymourSkinner.png?1497567511460"
   }
-];
 
-const QuoteList = () => (
-  <div>
-    {quotes.map(item => (
-        <QuoteCard key={item.quote} quote={item.quote} character={item.character} image={item.image}/>
-    ))}
-  </div>
-);
+class QuoteList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      quote : initialQuote
+    }
+
+    this.getQuote = this.getQuote.bind(this);
+  }
+
+  getQuote() {
+    this.setState({loading : true}, () => {
+      axios.get(`https://simpsons-quotes-api.herokuapp.com/quotes`)
+      .then(response => response.data)
+      .then(data => {
+        this.setState({
+          loading: false,
+          quote: data[0]
+        })
+      })
+    })
+  }
+
+  render() {
+    const {loading} = this.state;
+    return (
+      <div>
+        {loading ? 
+        <p>Loading</p>
+          :
+        <QuoteCard quote={this.state.quote}/>
+        }
+        <button type="submit" onClick={this.getQuote}>Get quote</button>
+      </div>
+    )
+  }
+};
 
 export default QuoteList;
